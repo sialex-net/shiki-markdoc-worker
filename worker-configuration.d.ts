@@ -2,4 +2,5 @@
 
 interface Env {
 	ASSETS: Fetcher;
+	AUTH_KEY: string;
 }

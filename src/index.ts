@@ -1,27 +1,49 @@
-/**
- * Welcome to Cloudflare Workers! This is your first worker.
- *
- * - Run `npm run dev` in your terminal to start a development server
- * - Open a browser tab at http://localhost:8787/ to see your worker in action
- * - Run `npm run deploy` to publish your worker
- *
- * Bind resources to your worker in `wrangler.toml`. After adding bindings, a type definition for the
- * `Env` object can be regenerated with `npm run cf-typegen`.
- *
- * Learn more at https://developers.cloudflare.com/workers/
- */
+import {
+	transformerNotationDiff,
+	transformerNotationHighlight,
+} from '@shikijs/transformers';
+import { authorizeRequest } from './auth';
+import { processMarkdown } from './markdoc';
+import { highlighter } from './shiki';
 
 export default {
 	// biome-ignore lint/correctness/noUnusedVariables:
 	async fetch(request, env, ctx): Promise<Response> {
-		const url = new URL(request.url);
+		if (!authorizeRequest(request, env)) {
+			return new Response('Forbidden', {
+				status: 403,
+			});
+		}
+		let url = new URL(request.url);
+		let body = await request.text();
 		switch (url.pathname) {
-			case '/message':
+			case '/':
 				return new Response('Hello, World!');
-			case '/random':
-				return new Response(crypto.randomUUID());
+			case '/markdoc': {
+				let renderableTree = processMarkdown(body);
+				let json = JSON.stringify(renderableTree);
+				return new Response(json, {
+					headers: { 'Content-Type': 'application/json; charset=utf-8' },
+				});
+			}
+			case '/shiki': {
+				let language = request.headers.get('shiki-language');
+				let html = highlighter.codeToHtml(body, {
+					lang: language ?? 'ts',
+					theme: 'catppuccin-macchiato',
+					transformers: [
+						transformerNotationDiff(),
+						transformerNotationHighlight(),
+					],
+				});
+				return new Response(html, {
+					headers: { 'Content-Type': 'text/html; charset=utf-8' },
+				});
+			}
 			default:
-				return new Response('Not Found', { status: 404 });
+				return new Response('Not Found', {
+					status: 404,
+				});
 		}
 	},
 } satisfies ExportedHandler<Env>;
