@@ -1,0 +1,13 @@
+{
+	"assets": {
+		"binding": "ASSETS",
+		"directory": "./public/"
+	},
+	"compatibility_date": "2024-12-24",
+	"compatibility_flags": ["nodejs_compat"],
+	"main": "./src/index.ts",
+	"name": "shiki-markdoc-worker",
+	"observability": {
+		"enabled": true
+	}
+}

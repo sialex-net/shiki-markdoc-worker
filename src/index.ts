@@ -12,6 +12,7 @@
  */
 
 export default {
+	// biome-ignore lint/correctness/noUnusedVariables:
 	async fetch(request, env, ctx): Promise<Response> {
 		const url = new URL(request.url);
 		switch (url.pathname) {

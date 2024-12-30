@@ -1,19 +1,22 @@
 {
-  "name": "shiki-markdoc-worker",
-  "version": "0.0.0",
-  "private": true,
-  "scripts": {
-    "deploy": "wrangler deploy",
-    "dev": "wrangler dev",
-    "start": "wrangler dev",
-    "test": "vitest",
-    "cf-typegen": "wrangler types"
-  },
-  "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "^0.5.2",
-    "@cloudflare/workers-types": "^4.20241224.0",
-    "typescript": "^5.5.2",
-    "vitest": "2.1.8",
-    "wrangler": "^3.60.3"
-  }
+	"name": "shiki-markdoc-worker",
+	"version": "0.0.0",
+	"private": true,
+	"scripts": {
+		"biome:check": "biome check --write --verbose",
+		"biome:ci": "biome ci --verbose",
+		"cf:deploy": "wrangler deploy",
+		"cf:secrets": "wrangler secret bulk ./.dev.vars.json",
+		"cf:typegen": "wrangler types --x-include-runtime",
+		"dev": "wrangler dev",
+		"start": "wrangler dev",
+		"test": "vitest"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.9.4",
+		"@cloudflare/vitest-pool-workers": "^0.5.2",
+		"typescript": "^5.5.2",
+		"vitest": "2.1.8",
+		"wrangler": "^3.60.3"
+	}
 }
